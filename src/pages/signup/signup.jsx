@@ -41,56 +41,50 @@ const handleSignup = async (e) => {
   };
   
   return (
-    <div className="relative flex flex-col justify-center min-h-screen overflow-hidden dark:bg-secondaryBackgroundDark">      
-      <div className="w-full p-6 m-auto border-2 border-accent bg-backgroundLight dark:bg-backgroundDark dark:text-textLight rounded-md shadow-md lg:max-w-xl">
-        <h1 className="text-3xl font-semibold text-center text-textLight dark:text-textDark">
-          Sign Up
-        </h1>
-        <form className="mt-6">
-          <div className="mb-2">
-            <label htmlFor="username" className="block text-sm font-semibold text-textLight dark:text-textDark">
-              Username
-            </label>
+    <div className="min-h-screen flex items-center justify-center bg-dark">
+      <div className="bg-darkGray border-mediumGray border-2 p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h2 className="text-white text-2xl font-bold mb-6 text-center">Learny</h2>
+        <form>
+          <div className="mb-4">
             <input
-              onChange={(e) => setUsername(e.target.value)}
               type="text"
-              className="block w-full px-4 py-2 mt-2 text-textLight dark:text-textDark dark:bg-inputDark rounded-md focus:border-accent focus:ring-accent focus:outline-none focus:ring focus:ring-opacity-99"
+              placeholder="Username"
+              className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
             />
           </div>
-          <div className="mb-2">
-            <label htmlFor="email" className="block text-sm font-semibold text-textLight dark:text-textDark">
-              Email
-            </label>
+          <div className="mb-4">
             <input
-              onChange={(e) => setEmail(e.target.value)}
               type="email"
-              className="block w-full px-4 py-2 mt-2 text-textLight dark:text-textDark dark:bg-inputDark rounded-md focus:border-accent focus:ring-accent focus:outline-none focus:ring focus:ring-opacity-99"
+              placeholder="email@mail.com"
+              className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
             />
           </div>
-          <div className="mb-2">
-            <label htmlFor="password" className="block text-sm font-semibold text-textLight dark:text-textDark">
-              Password
-            </label>
+          <div className="mb-4">
             <input
-              onChange={(e) => setPassword(e.target.value)}
               type="password"
-              className="block w-full px-4 py-2 mt-2 dark:text-textDark dark:bg-inputDark rounded-md focus:border-accent focus:ring-accent focus:outline-none focus:ring focus:ring-opacity-99"
+              placeholder="Password"
+              className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
             />
           </div>
-          <div className="mt-6 flex flex-col items-center">
-            <button onClick={handleSignup} className="text-textDark dark:text-textDark bg-accent hover:bg-accentHover font-bold py-2 px-4 rounded-full">
-              Signup
+          <div className="mb-6">
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
+            />
+          </div>
+          <div className="mb-4">
+            <button className="w-full p-3 bg-green text-white rounded-2xl hover:bg-green-dark focus:outline-none">
+              Sign up
+            </button>
+          </div>
+          <div className="text-center">
+            <button className="w-full p-3 bg-dark text-white flex items-center justify-center rounded-2xl focus:outline-none">
+              <img src="/google.png" alt="Google" className="h-5 w-5 mr-2" />
+              Signup with Google
             </button>
           </div>
         </form>
-  
-        <p className="mt-8 text-xs font-light text-center text-textLight dark:text-textDark">
-          {" "}
-          Already have an account{" "}
-          <a href="/signin" className="font-medium text-accent dark:text-accent hover:underline">
-            Sign in
-          </a>
-        </p>
       </div>
     </div>
   );  
