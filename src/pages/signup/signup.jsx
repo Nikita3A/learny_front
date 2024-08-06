@@ -75,7 +75,7 @@ const handleSignup = async (e) => {
           </div>
           <div className="mb-2 sm:mb-4">
             <button className="w-full p-3 bg-green text-white rounded-2xl hover:bg-green-dark focus:outline-none">
-              Sign up
+              Signup
             </button>
           </div>
           <div className="text-center my-4">
