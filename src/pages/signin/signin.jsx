@@ -67,49 +67,36 @@ const Signin = () => {
   };
 
   return (
-    <div className="relative flex flex-col justify-center min-h-screen overflow-hidden dark:bg-secondaryBackgroundDark">      
-      <div className="w-full p-6 m-auto border-2 border-accent bg-backgroundLight dark:bg-backgroundDark dark:text-textLight rounded-md shadow-md lg:max-w-xl">
-        <h1 className="text-3xl font-semibold text-center text-textLight dark:text-textDark">
-          Sign in
-        </h1>
-        <form className="mt-6">
-        <div className="mb-2">
-            <label htmlFor="email" className="block text-sm font-semibold text-textLight dark:text-textDark">
-              Email
-            </label>
+    <div className="h-screen flex items-center justify-center bg-dark">
+      <div className="bg-darkGray border-0 sm:border-mediumGray sm:border-2 p-4 sm:p-8 sm:rounded-2xl shadow-md w-full h-full sm:h-auto max-w-md flex flex-col justify-start">
+        <h2 className="text-white text-2xl font-bold mt-20 mb-10 text-center sm:mt-6 sm:mb-8">Learny</h2>
+        <form className="flex flex-col">
+          <div className="mb-2 sm:mb-4">
             <input
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              className="block w-full px-4 py-2 mt-2 text-textLight dark:text-textDark dark:bg-inputDark rounded-md focus:border-accent focus:ring-accent focus:outline-none focus:ring focus:ring-opacity-99"
+              type="text"
+              placeholder="username or email@mail.com"
+              className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
             />
           </div>
-          <div className="mb-2">
-            <label htmlFor="password" className="block text-sm font-semibold text-textLight dark:text-textDark">
-              Password
-            </label>
+          <div className="mb-2 sm:mb-4">
             <input
-              onChange={(e) => setPassword(e.target.value)}
               type="password"
-              className="block w-full px-4 py-2 mt-2 text-textLight dark:text-textDark dark:bg-inputDark rounded-md focus:border-accent focus:ring-accent focus:outline-none focus:ring focus:ring-opacity-99"
+              placeholder="password"
+              className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
             />
           </div>
-          <a href="#" className="text-xs text-accent dark:text-accent hover:underline">
-            Forget Password?
-          </a>
-          <div className="mt-6 flex flex-col items-center">
-            <button onClick={handleLogin} className="text-textDark dark:text-textDark bg-accent hover:bg-accentHover font-bold py-2 px-4 rounded-full">
+          <div className="mb-2 sm:mb-4">
+            <button className="w-full p-3 bg-green text-white rounded-2xl hover:bg-green-dark focus:outline-none">
               Signin
             </button>
           </div>
+          <div className="text-center my-4">
+            <button className="w-full p-3 bg-dark text-white flex items-center justify-center rounded-2xl focus:outline-none">
+              <img src="/google.png" alt="Google" className="h-5 w-5 mr-2" />
+              Signin with Google
+            </button>
+          </div>
         </form>
-  
-        <p className="mt-8 text-xs font-light text-center text-textLight dark:text-textDark">
-          {" "}
-          Don't have an account{" "}
-          <a href="signup" className="font-medium text-accent dark:text-accent hover:underline">
-            Sign up
-          </a>
-        </p>
       </div>
     </div>
   );
