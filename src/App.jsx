@@ -4,7 +4,7 @@ import "./App.css";
 import Signin from "./pages/signin/signin";
 import Signup from "./pages/signup/signup";
 import ChatPage from "./pages/main/main";
-import PrivateRoute from "./components/privateRoute";
+import PrivateRoute from "./components/PrivateRoute";
 
 const Layout = () => {
   // const location = useLocation();

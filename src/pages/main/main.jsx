@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Navbar from '../../components/navbarMobile';
-import AddChatModal from '../../components/addModalChat';
-import ChatList from '../../components/chats';
-import CourseList from '../../components/courses';
+import Navbar from '../../components/NavbarMobile';
+import AddChatModal from '../../components/AddModalChat';
+import ChatList from '../../components/Chats';
+import CourseList from '../../components/Courses';
 import io from 'socket.io-client';
 
 const ChatPage = () => {
@@ -39,6 +39,16 @@ const ChatPage = () => {
         const data = [
           { chatId: 1, name: 'Chat1' },
           { chatId: 2, name: 'Chat2' },
+          { chatId: 3, name: 'Chat3' },
+          { chatId: 4, name: 'Chat4' },
+          { chatId: 5, name: 'Chat5' },
+          { chatId: 6, name: 'Chat6' },
+          { chatId: 7, name: 'Chat7' },
+          { chatId: 8, name: 'Chat8' },
+          { chatId: 9, name: 'Chat9' },
+          { chatId: 10, name: 'Chat10' },
+          { chatId: 11, name: 'Chat11' },
+
         ];
         setChats(data);
       } catch (error) {
@@ -51,6 +61,16 @@ const ChatPage = () => {
         const data = [
           { id: 1, name: 'Course 1', progress: '100%' },
           { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          { id: 2, name: 'Course 2', progress: '80%' },
+          
         ];
         setCourses(data);
       } catch (error) {
@@ -123,26 +143,47 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-darkGray">
-      <Navbar 
-        onHomeClick={handleHomeClick} 
-        onMessagesClick={handleMessagesClick} 
-        onUserClick={handleUserClick} 
-      />
-      <div className="flex flex-col bg-dark h-screen w-full">
-        <div className="flex justify-between items-center px-4 py-2 bg-dark">
-          <div className="flex items-center">
-            <div className="text-white text-xl font-bold">
-              {isMenuOpen ? 'Chats' : 'Courses'}
-            </div>
-          </div>
+    <div className="flex flex-col min-h-screen bg-dark">
+      {/* Navbar is visible only on mobile screens */}
+      <div className="sm:hidden">
+        <Navbar 
+          onHomeClick={handleHomeClick} 
+          onMessagesClick={handleMessagesClick} 
+          onUserClick={handleUserClick} 
+        />
+      </div>
+      
+      <div className="flex flex-grow h-screen w-full">
+        {/* Mobile view: Render either chats or courses based on isMenuOpen */}
+        <div className="sm:hidden flex-grow">
+          {!selectedChat && (
+            <>
+              {isMenuOpen ? (
+                <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
+              ) : (
+                <CourseList courses={courses} onAddCourse={addCourse} />
+              )}
+            </>
+          )}
         </div>
-        {!selectedChat && isMenuOpen && (
-          <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
+  
+        {/* Desktop view: Show both chats and courses side by side */}
+        {!selectedChat && (
+          <>
+            <div className="hidden sm:flex sm:flex-col sm:w-1/5 bg-dark p-4">
+              <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
+            </div>
+  
+            {/* Spacer to push the CourseList to the right */}
+            <div className="hidden sm:flex sm:flex-col sm:w-3/5"></div>
+            
+            <div className="hidden sm:flex sm:flex-col sm:w-1/5 bg-dark p-4">
+              <CourseList courses={courses} onAddCourse={addCourse} />
+            </div>
+          </>
         )}
-        {!selectedChat && !isMenuOpen && (
-          <CourseList courses={courses} onAddCourse={addCourse} />
-        )}
+  
+        {/* Chat View */}
         {selectedChat && (
           <div className="flex-grow w-full bg-dark px-4 py-2">
             <div className="flex items-center justify-between bg-darkGray rounded-lg p-2 text-white">
