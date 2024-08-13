@@ -4,6 +4,7 @@ import Navbar from '../../components/NavbarMobile';
 import AddChatModal from '../../components/AddModalChat';
 import ChatList from '../../components/Chats';
 import CourseList from '../../components/Courses';
+import InputWithButton from '../../components/InputWithButton';
 import io from 'socket.io-client';
 
 const ChatPage = () => {
@@ -169,18 +170,20 @@ const ChatPage = () => {
   
         {/* Desktop view: Show both chats and courses side by side */}
         {!selectedChat && (
-          <>
-            <div className="hidden sm:flex sm:flex-col sm:w-1/5 bg-dark p-4">
+          <div className="hidden sm:flex sm:flex-grow">
+            <div className="flex flex-col w-1/5 bg-dark p-4">
               <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
             </div>
   
-            {/* Spacer to push the CourseList to the right */}
-            <div className="hidden sm:flex sm:flex-col sm:w-3/5"></div>
+            {/* InputWithButton container */}
+            <div className="flex flex-col w-3/5 justify-end p-4">
+              <InputWithButton onSubmit={handleSendMessage} />
+            </div>
             
-            <div className="hidden sm:flex sm:flex-col sm:w-1/5 bg-dark p-4">
+            <div className="flex flex-col w-1/5 bg-dark p-4">
               <CourseList courses={courses} onAddCourse={addCourse} />
             </div>
-          </>
+          </div>
         )}
   
         {/* Chat View */}
@@ -204,24 +207,16 @@ const ChatPage = () => {
                 </div>
               ))}
             </div>
-            <div className="flex items-center space-x-2 py-2">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-grow p-2 rounded-lg bg-darkGray text-white"
-                placeholder="Type a message..."
-              />
-              <button onClick={() => handleSendMessage(newMessage)} className="text-green">
-                <i className="fas fa-paper-plane"></i>
-              </button>
-            </div>
           </div>
         )}
       </div>
+  
       <AddChatModal isOpen={isModalOpen} onRequestClose={closeModal} setChats={setChats} />
     </div>
   );
+  
+  
+  
 };
 
 export default ChatPage;
