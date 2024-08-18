@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Navbar from '../../components/NavbarMobile';
-import AddChatModal from '../../components/AddModalChat';
+import Navbar from '../../components/Navbar';
 import ChatList from '../../components/Chats';
 import CourseList from '../../components/Courses';
 import InputWithButton from '../../components/InputWithButton';
+import AddChatModal from '../../components/AddChatModal';
 import io from 'socket.io-client';
 
-const ChatPage = () => {
+const App = () => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Default to showing courses
   const [chats, setChats] = useState([]);
@@ -16,6 +16,7 @@ const ChatPage = () => {
   const [socket, setSocket] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMessage, setNewMessage] = useState('');
+  const [view, setView] = useState('courses'); // Define 'view'
 
   const currentUser = useSelector(state => state.user.currentUser);
 
@@ -38,18 +39,19 @@ const ChatPage = () => {
     const fetchChats = async () => {
       try {
         const data = [
-          { chatId: 1, name: 'Chat1' },
-          { chatId: 2, name: 'Chat2' },
-          { chatId: 3, name: 'Chat3' },
-          { chatId: 4, name: 'Chat4' },
-          { chatId: 5, name: 'Chat5' },
-          { chatId: 6, name: 'Chat6' },
-          { chatId: 7, name: 'Chat7' },
-          { chatId: 8, name: 'Chat8' },
-          { chatId: 9, name: 'Chat9' },
-          { chatId: 10, name: 'Chat10' },
-          { chatId: 11, name: 'Chat11' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
 
+          // Other chats...
         ];
         setChats(data);
       } catch (error) {
@@ -61,17 +63,18 @@ const ChatPage = () => {
       try {
         const data = [
           { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          { id: 2, name: 'Course 2', progress: '80%' },
-          
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          // Other courses...
         ];
         setCourses(data);
       } catch (error) {
@@ -111,18 +114,20 @@ const ChatPage = () => {
 
   const addCourse = () => {
     console.log('yey');
-  }
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
   const handleHomeClick = () => {
-    setIsMenuOpen(false); // Show courses list
+    setView('courses'); // Show courses list
+    setIsMenuOpen(false); // Hide menu
   };
 
   const handleMessagesClick = () => {
-    setIsMenuOpen(true); // Show chat list
+    setView('chats'); // Show chat list
+    setIsMenuOpen(true); // Open menu
   };
 
   const handleUserClick = () => {
@@ -144,51 +149,38 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-dark">
-      {/* Navbar is visible only on mobile screens */}
-      <div className="sm:hidden">
+    <div className="flex flex-col h-screen bg-dark overflow-hidden">
+      <div className="w-full">
         <Navbar 
           onHomeClick={handleHomeClick} 
           onMessagesClick={handleMessagesClick} 
           onUserClick={handleUserClick} 
         />
       </div>
-      
-      <div className="flex flex-grow h-screen w-full">
-        {/* Mobile view: Render either chats or courses based on isMenuOpen */}
-        <div className="sm:hidden flex-grow">
-          {!selectedChat && (
-            <>
-              {isMenuOpen ? (
-                <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
+  
+      <div className="flex flex-grow h-full w-full overflow-hidden">
+        {!selectedChat && (
+          <div className="flex flex-grow w-full overflow-hidden">
+            {/* Sidebar containing ChatList or CourseList */}
+            <div className="flex flex-col w-full sm:w-1/5 bg-dark p-4 overflow-hidden">
+              {view === 'chats' ? (
+                <div className="flex flex-col flex-grow overflow-hidden">
+                  <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
+                </div>
               ) : (
                 <CourseList courses={courses} onAddCourse={addCourse} />
               )}
-            </>
-          )}
-        </div>
-  
-        {/* Desktop view: Show both chats and courses side by side */}
-        {!selectedChat && (
-          <div className="hidden sm:flex sm:flex-grow">
-            <div className="flex flex-col w-1/5 bg-dark p-4">
-              <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
             </div>
   
             {/* InputWithButton container */}
-            <div className="flex flex-col w-3/5 justify-end p-4">
+            <div className="hidden sm:flex sm:flex-col sm:w-3/5 justify-end p-4">
               <InputWithButton onSubmit={handleSendMessage} />
-            </div>
-            
-            <div className="flex flex-col w-1/5 bg-dark p-4">
-              <CourseList courses={courses} onAddCourse={addCourse} />
             </div>
           </div>
         )}
   
-        {/* Chat View */}
         {selectedChat && (
-          <div className="flex-grow w-full bg-dark px-4 py-2">
+          <div className="flex-grow w-full bg-dark px-4 py-2 overflow-hidden">
             <div className="flex items-center justify-between bg-darkGray rounded-lg p-2 text-white">
               <div className="text-xl font-bold">{selectedChat.name}</div>
               <button onClick={() => setSelectedChat(null)} className="text-white">
@@ -215,8 +207,7 @@ const ChatPage = () => {
     </div>
   );
   
-  
-  
+
 };
 
-export default ChatPage;
+export default App;
