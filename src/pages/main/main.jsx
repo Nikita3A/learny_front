@@ -5,6 +5,7 @@ import ChatList from '../../components/Chats';
 import CourseList from '../../components/Courses';
 import InputWithButton from '../../components/InputWithButton';
 import AddChatModal from '../../components/AddChatModal';
+import SelectedChat from '../../components/Chat';
 import io from 'socket.io-client';
 
 const App = () => {
@@ -108,12 +109,16 @@ const App = () => {
     }
   }, [selectedChat]);
 
-  const addChat = () => {
+  const handleSendToAI = () => {
     setIsModalOpen(true);
   };
 
   const addCourse = () => {
     console.log('yey');
+  };
+
+  const addChat = () => {
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
@@ -152,62 +157,68 @@ const App = () => {
     <div className="flex flex-col h-screen bg-dark overflow-hidden">
       <div className="w-full flex justify-center sm:w-auto">
         <Navbar 
-          onHomeClick={handleHomeClick} 
-          onMessagesClick={handleMessagesClick} 
-          onUserClick={handleUserClick} 
+          onHomeClick={() => {
+            handleHomeClick();
+            setSelectedChat(null); // Reset selectedChat when home is clicked
+          }} 
+          onMessagesClick={() => {
+            handleMessagesClick();
+            setSelectedChat(null); // Reset selectedChat when messages is clicked
+          }} 
+          onUserClick={() => {
+            handleUserClick();
+            setSelectedChat(null); // Reset selectedChat when user is clicked
+          }} 
         />
       </div>
   
-      <div className="flex flex-grow h-full w-full overflow-hidden">
-        {!selectedChat && (
-          <div className="flex flex-grow w-full overflow-hidden">
-            {/* Sidebar containing ChatList or CourseList */}
-            <div className="flex flex-col w-full sm:w-1/5 bg-dark p-4 overflow-hidden">
-              {view === 'chats' ? (
-                <div className="flex flex-col flex-grow overflow-hidden">
-                  <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
-                </div>
-              ) : (
-                <CourseList courses={courses} onAddCourse={addCourse} />
-              )}
+      <div className="flex flex-grow h-full w-full relative overflow-hidden">
+        {/* Sidebar containing ChatList or CourseList */}
+        <div
+          className={`flex flex-col ${
+            selectedChat ? 'hidden sm:flex sm:w-1/5' : 'w-full sm:w-1/5'
+          } bg-dark p-4 overflow-hidden`}
+        >
+          {view === 'chats' ? (
+            <div className="flex flex-col flex-grow overflow-hidden">
+              <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
             </div>
+          ) : (
+            <CourseList courses={courses} onAddCourse={addCourse} />
+          )}
+        </div>
   
-            {/* InputWithButton container */}
-            <div className="hidden sm:flex sm:flex-col sm:w-3/5 justify-end p-4">
-              <InputWithButton onSubmit={handleSendMessage} />
+        {/* SelectedChat and InputWithButton container */}
+        <div
+          className={`flex flex-col flex-grow ${
+            selectedChat ? 'w-full sm:w-4/5' : 'hidden'
+          } overflow-hidden bg-dark px-4 py-2 relative`}
+        >
+          {/* Messages and Selected Chat */}
+          {selectedChat && (
+            <div className="flex-grow overflow-y-auto">
+              <SelectedChat 
+                selectedChat={selectedChat} 
+                messages={messages} 
+                onBackClick={() => setSelectedChat(null)} 
+              />
             </div>
-          </div>
-        )}
+          )}
   
-        {selectedChat && (
-          <div className="flex-grow w-full bg-dark px-4 py-2 overflow-hidden">
-            <div className="flex items-center justify-between bg-darkGray rounded-lg p-2 text-white">
-              <div className="text-xl font-bold">{selectedChat.name}</div>
-              <button onClick={() => setSelectedChat(null)} className="text-white">
-                Back
-              </button>
-            </div>
-            <div className="flex-grow overflow-y-auto px-4 py-2">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`p-2 rounded-lg ${
-                    message.type === 'received' ? 'bg-mediumGray' : 'bg-green text-white'
-                  }`}
-                >
-                  {message.text}
-                </div>
-              ))}
-            </div>
+          {/* InputWithButton container at the bottom */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-dark">
+            <InputWithButton 
+              onSubmit={selectedChat ? handleSendMessage : handleSendToAI} 
+            />
           </div>
-        )}
+        </div>
       </div>
   
       <AddChatModal isOpen={isModalOpen} onRequestClose={closeModal} setChats={setChats} />
     </div>
   );
   
-
+  
 };
 
 export default App;
