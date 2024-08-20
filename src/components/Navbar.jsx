@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Navbar = ({ onHomeClick, onMessagesClick, onUserClick, streakDays }) => {
+const Navbar = ({ onHomeClick, onMessagesClick, onUserClick, onAiClick, streakDays }) => {
   return (
     <div className="w-full flex justify-between items-center px-4 py-2 bg-darkGray sm:rounded-lg sm:mt-4 sm:mx-4 sm:w-[calc(100%-2rem)]">
       <div className="flex items-center space-x-4">
@@ -9,6 +9,9 @@ const Navbar = ({ onHomeClick, onMessagesClick, onUserClick, streakDays }) => {
         </button>
         <button className="text-white text-xl" onClick={onMessagesClick}>
           <img src="/message.png" alt="Messages" className="w-6 h-6" />
+        </button>
+        <button className="text-white text-xl" onClick={onAiClick}>
+          <img src="/ai.png" alt="Messages" className="w-6 h-6 sm:hidden" />
         </button>
       </div>
 

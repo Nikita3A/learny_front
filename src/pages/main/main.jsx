@@ -1,68 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Navbar from '../../components/Navbar';
-import ChatList from '../../components/Chats';
-import CourseList from '../../components/Courses';
-import InputWithButton from '../../components/InputWithButton';
+import ChatList from '../../components/ChatList';
+import CourseList from '../../components/CourseList';
 import AddChatModal from '../../components/AddChatModal';
-import SelectedChat from '../../components/Chat';
+import ChatWindow from '../../components/ChatWindow';
 import io from 'socket.io-client';
 
 const App = () => {
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Default to showing courses
-  const [chats, setChats] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const [socket, setSocket] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newMessage, setNewMessage] = useState('');
-  const [view, setView] = useState('courses'); // Define 'view'
+  const [activeChat, setActiveChat] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [chatList, setChatList] = useState([]);
+  const [messageList, setMessageList] = useState([]);
+  const [courseList, setCourseList] = useState([]);
+  const [socketConnection, setSocketConnection] = useState(null);
+  const [isAddChatModalOpen, setIsAddChatModalOpen] = useState(false);
+  const [currentView, setCurrentView] = useState('courses');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  const [isAIChatVisible, setIsAIChatVisible] = useState(false); // New state to manage AI chat visibility on mobile screens
 
-  const currentUser = useSelector(state => state.user.currentUser);
+  const currentUser = useSelector((state) => state.user.currentUser);
+
+  // Update isMobile on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const socket = io('http://localhost:3000/chat');
-    setSocket(socket);
+    setSocketConnection(socket);
 
-    socket.on('chatToClient', (messagesArray) => {
-      setMessages((prevMessages) => {
-        let newMessages = [...prevMessages];
-        for (let message of messagesArray) {
-          if (!prevMessages.some((prevMessage) => prevMessage.id === message.id)) {
-            newMessages.push(message);
-          }
-        }
-        return newMessages;
+    socket.on('chatToClient', (receivedMessages) => {
+      setMessageList((prevMessages) => {
+        const newMessages = receivedMessages.filter(
+          (message) => !prevMessages.some((prevMessage) => prevMessage.id === message.id)
+        );
+        return [...prevMessages, ...newMessages];
       });
     });
 
-    const fetchChats = async () => {
+    const loadChats = async () => {
       try {
-        const data = [
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'FUCK' },
+        const mockChatData = [
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
+          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
 
-          // Other chats...
         ];
-        setChats(data);
+        setChatList(mockChatData);
       } catch (error) {
-        console.error("Error fetching chats: ", error);
+        console.error('Error fetching chats:', error);
       }
     };
 
-    const fetchCourses = async () => {
+    const loadCourses = async () => {
       try {
-        const data = [
+        const mockCourseData = [
           { id: 1, name: 'Course 1', progress: '100%' },
           { id: 1, name: 'Course 1', progress: '100%' },
           { id: 1, name: 'Course 1', progress: '100%' },
@@ -75,150 +82,155 @@ const App = () => {
           { id: 1, name: 'Course 1', progress: '100%' },
           { id: 1, name: 'Course 1', progress: '100%' },
           { id: 1, name: 'Course 1', progress: '100%' },
-          // Other courses...
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
+          { id: 1, name: 'Course 1', progress: '100%' },
         ];
-        setCourses(data);
+        setCourseList(mockCourseData);
       } catch (error) {
-        console.error("Error fetching courses: ", error);
+        console.error('Error fetching courses:', error);
       }
     };
 
-    fetchChats();
-    fetchCourses();
+    loadChats();
+    loadCourses();
 
     return () => socket.close();
   }, [currentUser]);
 
   useEffect(() => {
-    if (selectedChat) {
+    if (activeChat) {
       const chatSocket = io('http://localhost:3000/chat', {
-        query: { chatId: selectedChat.id },
+        query: { chatId: activeChat.id },
       });
 
-      chatSocket.emit('joinChat', selectedChat.id);
-      chatSocket.emit('requestMessages', selectedChat.id);
+      chatSocket.emit('joinChat', activeChat.id);
+      chatSocket.emit('requestMessages', activeChat.id);
 
-      chatSocket.on('chatToClient', (messages) => {
-        setMessages(messages);
+      chatSocket.on('chatToClient', (receivedMessages) => {
+        setMessageList(receivedMessages);
       });
 
-      setSocket(chatSocket);
-      setMessages([]);
+      setSocketConnection(chatSocket);
+      setMessageList([]);
 
-      return () => chatSocket.emit('leaveChat', selectedChat.id);
+      return () => chatSocket.emit('leaveChat', activeChat.id);
     }
-  }, [selectedChat]);
+  }, [activeChat]);
 
-  const handleSendToAI = () => {
-    setIsModalOpen(true);
-  };
-
-  const addCourse = () => {
-    console.log('yey');
-  };
-
-  const addChat = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleHomeClick = () => {
-    setView('courses'); // Show courses list
-    setIsMenuOpen(false); // Hide menu
-  };
-
-  const handleMessagesClick = () => {
-    setView('chats'); // Show chat list
-    setIsMenuOpen(true); // Open menu
-  };
-
-  const handleUserClick = () => {
-    // Handle user icon click (e.g., show user profile)
-  };
-
-  const handleSendMessage = (text) => {
-    if (socket && text.trim() !== '') {
-      socket.emit('sendMessage', {
-        text: text,
+  const handleSendMessage = (messageText) => {
+    if (socketConnection && messageText.trim() !== '') {
+      socketConnection.emit('sendMessage', {
+        text: messageText,
         userId: currentUser.user.id,
-        chatId: selectedChat.id,
+        chatId: activeChat ? activeChat.id : 'ai',
       });
-      socket.on('newMessage', (message) => {
-        setMessages((prevMessages) => [...prevMessages, message]);
+
+      socketConnection.on('newMessage', (newMessage) => {
+        setMessageList((prevMessages) => [...prevMessages, newMessage]);
       });
-      setNewMessage('');
     }
+  };
+
+  const toggleAddChatModal = () => {
+    setIsAddChatModalOpen(!isAddChatModalOpen);
+  };
+
+  const handleChatSelect = (chat) => {
+    setActiveChat(chat);
+    setIsSidebarOpen(false); 
+  };
+
+  const switchToAIView = () => {
+    setCurrentView('ai');
+    setActiveChat(null);
+    setIsAIChatVisible(true); // Show AI chat on mobile
+    setIsSidebarOpen(!isMobile); 
+  };
+
+  const switchToChatsView = () => {
+    setCurrentView('chats');
+    setActiveChat(null);
+    setIsAIChatVisible(false); // Hide AI chat when switching to chats on mobile
+    setIsSidebarOpen(true); 
+  };
+
+  const switchToCoursesView = () => {
+    setCurrentView('courses');
+    setActiveChat(null);
+    setIsAIChatVisible(false); // Hide AI chat when switching to courses on mobile
+    setIsSidebarOpen(true);
+  };
+
+  const handleBackClick = () => {
+    setActiveChat(null);
+    setIsSidebarOpen(true);
+    setIsAIChatVisible(false); // Hide AI chat when going back on mobile
   };
 
   return (
     <div className="flex flex-col h-screen bg-dark overflow-hidden">
-      <div className="w-full flex justify-center sm:w-auto">
-        <Navbar 
-          onHomeClick={() => {
-            handleHomeClick();
-            setSelectedChat(null); // Reset selectedChat when home is clicked
-          }} 
-          onMessagesClick={() => {
-            handleMessagesClick();
-            setSelectedChat(null); // Reset selectedChat when messages is clicked
-          }} 
-          onUserClick={() => {
-            handleUserClick();
-            setSelectedChat(null); // Reset selectedChat when user is clicked
-          }} 
-        />
-      </div>
-  
-      <div className="flex flex-grow h-full w-full relative overflow-hidden">
-        {/* Sidebar containing ChatList or CourseList */}
+      <Navbar
+        onHomeClick={switchToCoursesView}
+        onMessagesClick={switchToChatsView}
+        onAiClick={switchToAIView}
+        onUserClick={() => {}}
+      />
+
+      <div className="flex flex-grow h-full w-full overflow-hidden">
         <div
-          className={`flex flex-col ${
-            selectedChat ? 'hidden sm:flex sm:w-1/5' : 'w-full sm:w-1/5'
-          } bg-dark p-4 overflow-hidden`}
+          className={`flex flex-col bg-dark p-4 overflow-hidden ${
+            isSidebarOpen ? 'w-full sm:w-1/5' : 'hidden sm:flex sm:w-1/5'
+          }`}
         >
-          {view === 'chats' ? (
-            <div className="flex flex-col flex-grow overflow-hidden">
-              <ChatList chats={chats} onAddChat={addChat} onChatSelect={setSelectedChat} />
-            </div>
+          {currentView === 'chats' ? (
+            <ChatList chats={chatList} onAddChat={toggleAddChatModal} onChatSelect={handleChatSelect} />
           ) : (
-            <CourseList courses={courses} onAddCourse={addCourse} />
+            <CourseList courses={courseList} onAddCourse={() => {}} />
           )}
         </div>
-  
-        {/* SelectedChat and InputWithButton container */}
+
         <div
-          className={`flex flex-col flex-grow ${
-            selectedChat ? 'w-full sm:w-4/5' : 'hidden'
-          } overflow-hidden bg-dark px-4 py-2 relative`}
+          className={`flex flex-col flex-grow overflow-hidden bg-dark px-4 py-2 relative ${
+            activeChat || (currentView === 'ai' && (!isMobile || isAIChatVisible)) ? 'w-full sm:w-4/5' : 'hidden'
+          }`}
         >
-          {/* Messages and Selected Chat */}
-          {selectedChat && (
-            <div className="flex-grow overflow-y-auto">
-              <SelectedChat 
-                selectedChat={selectedChat} 
-                messages={messages} 
-                onBackClick={() => setSelectedChat(null)} 
-              />
+          {activeChat ? (
+            <ChatWindow
+              chat={activeChat}
+              messages={messageList}
+              onBackClick={handleBackClick}
+              onSubmitMessage={handleSendMessage}
+            />
+          ) : currentView === 'ai' && (!isMobile || isAIChatVisible) ? (
+            <ChatWindow
+              chat={{ name: 'AI Chat' }}
+              messages={messageList}
+              onBackClick={handleBackClick}
+              onSubmitMessage={handleSendMessage}
+            />
+          ) : (
+            <div className="text-center text-white flex-grow flex items-center justify-center">
+              {currentView === 'courses' ? 'Select a course to view details' : 'Select a chat to start messaging'}
             </div>
           )}
-  
-          {/* InputWithButton container at the bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-dark">
-            <InputWithButton 
-              onSubmit={selectedChat ? handleSendMessage : handleSendToAI} 
+        </div>
+
+        {currentView === 'courses' && !isMobile && (
+          <div className="flex flex-col w-full p-4 bg-dark">
+            <ChatWindow
+              chat={{ name: 'AI Chat' }}
+              messages={messageList}
+              onBackClick={() => {}}
+              onSubmitMessage={handleSendMessage}
             />
           </div>
-        </div>
+        )}
       </div>
-  
-      <AddChatModal isOpen={isModalOpen} onRequestClose={closeModal} setChats={setChats} />
+
+      <AddChatModal isOpen={isAddChatModalOpen} onRequestClose={toggleAddChatModal} setChats={setChatList} />
     </div>
   );
-  
-  
 };
 
 export default App;
