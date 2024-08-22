@@ -5,6 +5,7 @@ import ChatList from '../../components/ChatList';
 import CourseList from '../../components/CourseList';
 import AddChatModal from '../../components/AddChatModal';
 import ChatWindow from '../../components/ChatWindow';
+import Profile from '../../components/Profile';
 import io from 'socket.io-client';
 
 const App = () => {
@@ -17,11 +18,11 @@ const App = () => {
   const [isAddChatModalOpen, setIsAddChatModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState('courses');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
-  const [isAIChatVisible, setIsAIChatVisible] = useState(false); // New state to manage AI chat visibility on mobile screens
+  const [isAIChatVisible, setIsAIChatVisible] = useState(false);
+  const [isProfileVisible, setIsProfileVisible] = useState(false);
 
   const currentUser = useSelector((state) => state.user.currentUser);
 
-  // Update isMobile on window resize
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 640);
@@ -48,18 +49,6 @@ const App = () => {
       try {
         const mockChatData = [
           { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-
         ];
         setChatList(mockChatData);
       } catch (error) {
@@ -70,20 +59,6 @@ const App = () => {
     const loadCourses = async () => {
       try {
         const mockCourseData = [
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
-          { id: 1, name: 'Course 1', progress: '100%' },
           { id: 1, name: 'Course 1', progress: '100%' },
         ];
         setCourseList(mockCourseData);
@@ -138,34 +113,46 @@ const App = () => {
 
   const handleChatSelect = (chat) => {
     setActiveChat(chat);
-    setIsSidebarOpen(false); 
+    setIsSidebarOpen(false);
+    setIsProfileVisible(false);
   };
 
   const switchToAIView = () => {
     setCurrentView('ai');
     setActiveChat(null);
-    setIsAIChatVisible(true); // Show AI chat on mobile
-    setIsSidebarOpen(!isMobile); 
+    setIsAIChatVisible(true);
+    setIsSidebarOpen(!isMobile);
+    setIsProfileVisible(false);
   };
 
   const switchToChatsView = () => {
     setCurrentView('chats');
     setActiveChat(null);
-    setIsAIChatVisible(false); // Hide AI chat when switching to chats on mobile
-    setIsSidebarOpen(true); 
+    setIsAIChatVisible(false);
+    setIsSidebarOpen(true);
+    setIsProfileVisible(false);
   };
 
   const switchToCoursesView = () => {
     setCurrentView('courses');
     setActiveChat(null);
-    setIsAIChatVisible(false); // Hide AI chat when switching to courses on mobile
+    setIsAIChatVisible(false);
     setIsSidebarOpen(true);
+    setIsProfileVisible(false);
+  };
+
+  const switchToProfileView = () => {
+    setIsProfileVisible(true);
+    setActiveChat(null);
+    setIsSidebarOpen(false);
+    setIsAIChatVisible(false);
   };
 
   const handleBackClick = () => {
     setActiveChat(null);
     setIsSidebarOpen(true);
-    setIsAIChatVisible(false); // Hide AI chat when going back on mobile
+    setIsAIChatVisible(false);
+    setIsProfileVisible(false);
   };
 
   return (
@@ -174,60 +161,63 @@ const App = () => {
         onHomeClick={switchToCoursesView}
         onMessagesClick={switchToChatsView}
         onAiClick={switchToAIView}
-        onUserClick={() => {}}
+        onProfileClick={switchToProfileView}
       />
 
       <div className="flex flex-grow h-full w-full overflow-hidden">
-        <div
-          className={`flex flex-col bg-dark p-4 overflow-hidden ${
-            isSidebarOpen ? 'w-full sm:w-1/5' : 'hidden sm:flex sm:w-1/5'
-          }`}
-        >
-          {currentView === 'chats' ? (
-            <ChatList chats={chatList} onAddChat={toggleAddChatModal} onChatSelect={handleChatSelect} />
-          ) : (
-            <CourseList courses={courseList} onAddCourse={() => {}} />
-          )}
-        </div>
-
-        <div
-          className={`flex flex-col flex-grow overflow-hidden bg-dark px-4 py-2 relative ${
-            activeChat || (currentView === 'ai' && (!isMobile || isAIChatVisible)) ? 'w-full sm:w-4/5' : 'hidden'
-          }`}
-        >
-          {activeChat ? (
-            <ChatWindow
-              chat={activeChat}
-              messages={messageList}
-              onBackClick={handleBackClick}
-              onSubmitMessage={handleSendMessage}
-            />
-          ) : currentView === 'ai' && (!isMobile || isAIChatVisible) ? (
-            <ChatWindow
-              chat={{ name: 'AI Chat' }}
-              messages={messageList}
-              onBackClick={handleBackClick}
-              onSubmitMessage={handleSendMessage}
-            />
-          ) : (
-            <div className="text-center text-white flex-grow flex items-center justify-center">
-              {currentView === 'courses' ? 'Select a course to view details' : 'Select a chat to start messaging'}
-            </div>
-          )}
-        </div>
-
-        {currentView === 'courses' && !isMobile && (
-          <div className="flex flex-col w-full p-4 bg-dark">
-            <ChatWindow
-              chat={{ name: 'AI Chat' }}
-              messages={messageList}
-              onBackClick={() => {}}
-              onSubmitMessage={handleSendMessage}
-            />
+        {isProfileVisible ? (
+          <div className="flex flex-col flex-grow bg-dark p-0 sm:p-4">
+            <Profile user={currentUser} />
           </div>
+        ) : (
+          <>
+            <div
+              className={`flex flex-col bg-dark p-4 overflow-hidden ${
+                isSidebarOpen ? 'w-full sm:w-1/5' : 'hidden sm:flex sm:w-1/5'
+              }`}
+            >
+              {currentView === 'chats' ? (
+                <ChatList chats={chatList} onAddChat={toggleAddChatModal} onChatSelect={handleChatSelect} />
+              ) : (
+                <CourseList courses={courseList} onAddCourse={() => {}} />
+              )}
+            </div>
+
+            <div
+              className={`flex flex-col flex-grow overflow-hidden bg-dark px-4 py-2 relative ${
+                activeChat || (currentView === 'ai' && (!isMobile || isAIChatVisible)) ? 'w-full sm:w-4/5' : 'hidden'
+              }`}
+            >
+              {activeChat ? (
+                <ChatWindow
+                  chat={activeChat}
+                  messages={messageList}
+                  onBackClick={handleBackClick}
+                  onSubmitMessage={handleSendMessage}
+                />
+              ) : currentView === 'ai' && (!isMobile || isAIChatVisible) ? (
+                <ChatWindow
+                  chat={{ name: 'AI Chat' }}
+                  messages={messageList}
+                  onBackClick={handleBackClick}
+                  onSubmitMessage={handleSendMessage}
+                />
+              ) : null}
+            </div>
+
+            {currentView === 'courses' && !isMobile && (
+              <div className="flex flex-col w-full p-4 bg-dark">
+                <ChatWindow
+                  chat={{ name: 'AI Chat' }}
+                  messages={messageList}
+                  onBackClick={() => {}}
+                  onSubmitMessage={handleSendMessage}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
-
       <AddChatModal isOpen={isAddChatModalOpen} onRequestClose={toggleAddChatModal} setChats={setChatList} />
     </div>
   );

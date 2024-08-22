@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Navbar = ({ onHomeClick, onMessagesClick, onUserClick, onAiClick, streakDays }) => {
+const Navbar = ({ onHomeClick, onMessagesClick, onProfileClick, onAiClick, streakDays }) => {
   return (
-    <div className="w-full flex justify-between items-center px-4 py-2 bg-darkGray sm:rounded-lg sm:mt-4 sm:mx-4 sm:w-[calc(100%-2rem)]">
+    <div className="w-full flex justify-between items-center px-4 py-2 bg-darkGray border-b border-mediumGray sm:border-0 sm:rounded-lg sm:mt-4 sm:mx-4 sm:w-[calc(100%-2rem)]">
       <div className="flex items-center space-x-4">
         <button className="text-white text-xl" onClick={onHomeClick}>
           <img src="/house.png" alt="Home" className="w-6 h-6 invert" />
@@ -20,7 +20,7 @@ const Navbar = ({ onHomeClick, onMessagesClick, onUserClick, onAiClick, streakDa
           <img src="/fire.png" alt="Streak" className="w-6 h-6" />
           <span className="ml-1 text-lg">{streakDays}</span>
         </div>
-        <button className="text-white text-xl" onClick={onUserClick}>
+        <button className="text-white text-xl" onClick={onProfileClick}>
           <img src="/user.png" alt="User" className="w-6 h-6" />
         </button>
       </div>
