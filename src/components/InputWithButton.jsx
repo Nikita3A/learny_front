@@ -27,7 +27,7 @@ const InputWithButton = ({ onSubmit }) => {
         onClick={handleSubmit}
         className="absolute right-3 text-green flex items-center justify-center"
       >
-        <img src="/inputButton.png" alt="Enter" className="w-6 h-6" />
+        <img src="/arrowInCircle.png" alt="Enter" className="w-6 h-6" />
       </button>
     </div>
   );

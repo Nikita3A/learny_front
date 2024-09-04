@@ -10,9 +10,9 @@ const Navbar = ({ onHomeClick, onMessagesClick, onProfileClick, onAiClick, strea
         <button className="text-white text-xl" onClick={onMessagesClick}>
           <img src="/message.png" alt="Messages" className="w-6 h-6" />
         </button>
-        <button className="text-white text-xl" onClick={onAiClick}>
-          <img src="/ai.png" alt="Messages" className="w-6 h-6 sm:hidden" />
-        </button>
+        {/* <button className="text-white text-xl" onClick={onAiClick}>
+          <img src="/ai.png" alt="Messages" className="w-6 h-6" />
+        </button> */}
       </div>
 
       <div className="flex items-center space-x-2">

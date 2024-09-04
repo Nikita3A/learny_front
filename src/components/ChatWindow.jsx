@@ -7,8 +7,8 @@ const ChatWindow = ({ chat, messages, onBackClick, onSubmitMessage }) => {
       {/* Chat header */}
       <div className="flex items-center justify-between bg-darkGray rounded-lg p-2 text-white">
         <div className="text-xl font-bold">{chat.name}</div>
-        <button onClick={onBackClick} className="text-white">
-          Back
+        <button onClick={onBackClick} className="text-white w-5 h-5">
+          <img className='rotate-180' src="./arrowInCircle.png" alt="" />
         </button>
       </div>
 
