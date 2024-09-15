@@ -8,6 +8,7 @@ import ChatWindow from '../../components/ChatWindow';
 import Profile from '../../components/Profile';
 import CoursePlan from '../../components/CoursePlan';
 import CreateCourse from '../../components/CreateCourse';
+import UnitInfo from '../../components/UnitInfo'; // Import the UnitInfo component
 import io from 'socket.io-client';
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null); // New state for selected course
   const [createCourse, setCreateCourse] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState(null); // New state for selected unit
 
   const currentUser = useSelector((state) => state.user.currentUser);
   
@@ -117,6 +119,7 @@ const App = () => {
 
   const handleChatSelect = (chat) => {
     setActiveChat(chat);
+    setSelectedUnit(null);
     setIsSidebarOpen(false);
     setIsProfileVisible(false);
     setSelectedCourse(null); // Deselect course when a chat is selected
@@ -124,8 +127,10 @@ const App = () => {
   };
 
   const handleCourseSelect = (course) => {
-    console.log('ddddd');
+    console.log('unit: ', selectedUnit);
+    console.log('Selected course: ', course);
     setSelectedCourse(course);
+    setSelectedUnit(null);
     setActiveChat(null); // Deselect chat when a course is selected
     setIsSidebarOpen(false);
     setIsProfileVisible(false);
@@ -135,6 +140,7 @@ const App = () => {
   const switchToAIView = () => {
     setCurrentView('ai');
     setActiveChat(null);
+    setSelectedUnit(null);
     setIsAIChatVisible(true);
     setIsSidebarOpen(!isMobile);
     setIsProfileVisible(false);
@@ -145,6 +151,7 @@ const App = () => {
   const switchToChatsView = () => {
     setCurrentView('chats');
     setActiveChat(null);
+    setSelectedUnit(null);
     setIsAIChatVisible(false);
     setIsSidebarOpen(true);
     setIsProfileVisible(false);
@@ -155,16 +162,18 @@ const App = () => {
   const switchToCoursesView = () => {
     setCurrentView('courses');
     setActiveChat(null);
+    setSelectedUnit(null);
     setIsAIChatVisible(false);
     setIsSidebarOpen(true);
     setIsProfileVisible(false);
-    setSelectedCourse(false);
+    setSelectedCourse(null);
     setCreateCourse(null);
   };
 
   const switchToProfileView = () => {
     setIsProfileVisible(true);
     setActiveChat(null);
+    setSelectedUnit(null);
     setIsSidebarOpen(false);
     setIsAIChatVisible(false);
     setSelectedCourse(null); // Deselect course when profile view is selected
@@ -174,11 +183,20 @@ const App = () => {
   const handleCreateCourse = () => {
     setCreateCourse(true)
     setIsProfileVisible(false);
+    setSelectedUnit(null);
     setActiveChat(null);
     setIsSidebarOpen(false);
     setIsAIChatVisible(false);
     setSelectedCourse(null); // Deselect course when profile view is selected
   }
+
+  const handleUnitSelect = (unit) => {
+    console.log('haha');
+    setSelectedUnit(unit);
+    console.log('Hunit: ', selectedUnit);
+    setIsSidebarOpen(false);
+  };
+  
 
   const handleBackClick = () => {
     setActiveChat(null);
@@ -197,7 +215,7 @@ const App = () => {
         onAiClick={switchToAIView}
         onProfileClick={switchToProfileView}
       />
-
+  
       <div className="flex flex-grow h-full w-full overflow-hidden">
         {isProfileVisible ? (
           <div className="flex flex-col flex-grow bg-dark p-0 sm:p-4">
@@ -206,7 +224,7 @@ const App = () => {
         ) : (
           <>
             <div
-              className={`flex flex-col bg-dark p-4 overflow-hidden ${
+              className={`flex flex-col bg-dark pt-3 pb-3 overflow-hidden ${
                 isSidebarOpen ? 'w-full sm:w-1/5' : 'hidden sm:flex sm:w-1/5'
               }`}
             >
@@ -216,7 +234,7 @@ const App = () => {
                 <CourseList courses={courseList} onAddCourse={handleCreateCourse} onCourseSelect={handleCourseSelect} />
               )}
             </div>
-
+  
             <div
               className={`flex flex-col flex-grow overflow-hidden bg-dark px-4 py-2 relative ${
                 (activeChat || (currentView === 'ai' && (!isMobile || isAIChatVisible))) ? 'w-full sm:w-4/5' : 'hidden'
@@ -239,16 +257,24 @@ const App = () => {
               ) : null}
             </div>
 
-            {currentView === 'courses' && selectedCourse && (
+            {/* Conditionally render selected unit info or course plan */}
+            {selectedUnit ? (
+              // Render both Course Plan and Unit Info when a unit is selected
               <div className="flex flex-col w-full p-4 bg-red">
-                <CoursePlan course={selectedCourse} />
+                <CoursePlan course={selectedCourse} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} onUnitSelect={handleUnitSelect} />
+                {/* <UnitInfo unitName={selectedUnit.title} content={selectedUnit.content} pageCount={selectedUnit.pageCount} /> */}
               </div>
-            )}
-            {currentView === 'courses' && createCourse && (
+            ) : currentView === 'courses' && selectedCourse ? (
+              // Render only Course Plan when a course is selected and no unit is selected
               <div className="flex flex-col w-full p-4 bg-red">
-                <CreateCourse/>
+                <CoursePlan course={selectedCourse} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} onUnitSelect={handleUnitSelect} />
               </div>
-            )}
+            ) : currentView === 'courses' && createCourse ? (
+              // Render Create Course view when createCourse state is true
+              <div className="flex flex-col w-full p-4 bg-red">
+                <CreateCourse />
+              </div>
+            ) : null}
           </>
         )}
       </div>
