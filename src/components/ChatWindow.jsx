@@ -3,7 +3,7 @@ import InputWithButton from './InputWithButton';
 
 const ChatWindow = ({ chat, messages, onBackClick, onSubmitMessage }) => {
   return (
-    <div className="flex-grow w-full bg-dark px-4 py-2 overflow-hidden flex flex-col">
+    <div className="flex-grow w-full bg-dark py-2 overflow-hidden flex flex-col">
       {/* Chat header */}
       <div className="flex items-center justify-between bg-darkGray rounded-lg p-2 text-white">
         <div className="text-xl font-bold">{chat.name}</div>
