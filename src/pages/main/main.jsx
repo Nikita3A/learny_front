@@ -260,18 +260,18 @@ const App = () => {
             {/* Conditionally render selected unit info or course plan */}
             {selectedUnit ? (
               // Render both Course Plan and Unit Info when a unit is selected
-              <div className="flex flex-col w-full p-4 bg-red">
+              <div className="flex flex-col w-full p-4 bg-darkGrey">
                 <CoursePlan course={selectedCourse} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} onUnitSelect={handleUnitSelect} />
                 {/* <UnitInfo unitName={selectedUnit.title} content={selectedUnit.content} pageCount={selectedUnit.pageCount} /> */}
               </div>
             ) : currentView === 'courses' && selectedCourse ? (
               // Render only Course Plan when a course is selected and no unit is selected
-              <div className="flex flex-col w-full p-4 bg-red">
+              <div className="flex flex-col w-full p-4 bg-darkGrey">
                 <CoursePlan course={selectedCourse} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} onUnitSelect={handleUnitSelect} />
               </div>
             ) : currentView === 'courses' && createCourse ? (
               // Render Create Course view when createCourse state is true
-              <div className="flex flex-col w-full p-4 bg-red">
+              <div className="flex flex-col w-full p-4 bg-darkGrey">
                 <CreateCourse />
               </div>
             ) : null}
