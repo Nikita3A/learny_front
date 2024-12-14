@@ -40,7 +40,7 @@ const Profile = () => {
             </button>
           </div>
           <div>
-            <button className="w-full p-3 bg-red-500 text-white rounded-2xl hover:bg-red-600 focus:outline-none">
+            <button className="w-full p-3 bg-red text-white rounded-2xl hover:bg-red-600 focus:outline-none">
               Logout
             </button>
           </div>
