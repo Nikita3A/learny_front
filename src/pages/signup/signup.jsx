@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 
 import { useDispatch } from "react-redux";
-// import MyButton from "../../components/Button";
-// import DarkModeButton from "../../components/DarkMode";
 import { loginStart, loginSuccess, loginFailed } from "../../redux/userSlice";
 
 import { useNavigate } from "react-router-dom";
@@ -11,9 +9,6 @@ import { useNavigate } from "react-router-dom";
 const Signup = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [birthDate, setBirthDate] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
 
@@ -22,10 +17,10 @@ const Signup = () => {
 
 const handleSignup = async (e) => {
     e.preventDefault();
-    // if (password !== confirmPassword) {
-    //   alert("Passwords do not match");
-    //   return;
-    // }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
     dispatch(loginStart());
     try {
       const res = await axios.post("/api/auth/signup", {
@@ -50,6 +45,7 @@ const handleSignup = async (e) => {
               type="text"
               placeholder="username"
               className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div className="mb-2 sm:mb-4">
@@ -57,6 +53,7 @@ const handleSignup = async (e) => {
               type="email"
               placeholder="email@mail.com"
               className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-2 sm:mb-4">
@@ -64,6 +61,7 @@ const handleSignup = async (e) => {
               type="password"
               placeholder="password"
               className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="mb-4 sm:mb-4">
@@ -71,10 +69,11 @@ const handleSignup = async (e) => {
               type="password"
               placeholder="confirm password"
               className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
           <div className="mb-2 sm:mb-4">
-            <button className="w-full p-3 bg-green text-white rounded-2xl hover:bg-green-dark focus:outline-none">
+            <button onClick={handleSignup} className="w-full p-3 bg-green text-white rounded-2xl hover:bg-green-dark focus:outline-none">
               Signup
             </button>
           </div>
