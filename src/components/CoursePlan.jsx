@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { useSelector } from "react-redux";
-import UnitInfo from './UnitInfo';
+import LessonContent from './LessonContent';
 import Test from './Test';
 
-const CoursePlan = ({ course, selectedUnit, setSelectedUnit }) => {
+const CoursePlan = ({ course, selectedLesson, setSelectedLesson }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [courseData, setCourseData] = useState([]);
   const [expandedSection, setExpandedSection] = useState(null);
@@ -17,7 +17,7 @@ const CoursePlan = ({ course, selectedUnit, setSelectedUnit }) => {
         const response = await axios.get(`/api/courses/${course.id}`, {
           headers: { Authorization: `Bearer ${currentUser.accessToken}` }
         });
-        console.log("API Response:", response);
+
         if (response.data && response.data.units && Array.isArray(response.data.units)) {
           setCourseData(response.data.units);
         } else {
@@ -36,13 +36,13 @@ const CoursePlan = ({ course, selectedUnit, setSelectedUnit }) => {
     }
   }, [course, currentUser?.accessToken]);
 
-  const toggleSection = (index) => {
+  const toggleSection = (index) => {    
     setExpandedSection(expandedSection === index ? null : index);
-    setSelectedUnit(null);
+    setSelectedLesson(null);
   };
 
-  const handleUnitClick = (lesson) => {
-    setSelectedUnit(lesson);
+  const handleLessonClick = (lesson) => {    
+    setSelectedLesson(lesson);
   };
 
   const handleTestClick = (testId) => {
@@ -69,8 +69,9 @@ const CoursePlan = ({ course, selectedUnit, setSelectedUnit }) => {
       ) : (
         <>
           <div className="scrollbar-hidden overflow-y-auto flex-grow h-full">
-            {selectedUnit ? (
-              <UnitInfo unitName={selectedUnit.title} content={selectedUnit.content} pageCount={selectedUnit.pageCount} />
+            {selectedLesson ? (
+              <LessonContent unitId={courseData.find(unit => unit.lessons.some(lesson => lesson.id === selectedLesson.id))?.id} 
+              lessonData={selectedLesson}/>
             ) : (
               courseData.length > 0 ? (
                 courseData.map((section, index) => (
@@ -89,12 +90,12 @@ const CoursePlan = ({ course, selectedUnit, setSelectedUnit }) => {
                           <div
                             key={lessonIndex}
                             className={`unit-item flex items-center py-2 ${lessonIndex === section.lessons.length - 1 ? '' : 'border-b border-mediumGray'}`}
-                            onClick={() => handleUnitClick(lesson)}
+                            onClick={() => handleLessonClick(lesson)}
                           >
                             <p className={`unit-title text-md flex-1 cursor-pointer ${lesson.finished ? 'text-green' : 'text-white'}`}>
                               {lesson.title}
                             </p>
-                            {lesson.testId && ( //Conditionally render the test icon
+                            {lesson.testId && (
                               <div onClick={() => handleTestClick(lesson.testId)}>
                                 <img src="./test.png" alt="Test icon" className={`ml-2 w-5 h-5 ${lesson.finished ? 'opacity-50' : 'opacity-100'}`} />
                               </div>

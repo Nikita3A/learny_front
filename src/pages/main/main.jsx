@@ -8,7 +8,6 @@ import ChatWindow from '../../components/ChatWindow';
 import Profile from '../../components/Profile';
 import CoursePlan from '../../components/CoursePlan';
 import CreateCourse from '../../components/CreateCourse';
-import UnitInfo from '../../components/UnitInfo'; // Import the UnitInfo component
 import io from 'socket.io-client';
 import axios from "axios";
 
@@ -312,13 +311,15 @@ const App = () => {
             {selectedUnit ? (
               // Render both Course Plan and Unit Info when a unit is selected
               <div className="flex flex-col w-full p-4 bg-darkGrey">
-                <CoursePlan course={selectedCourse} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} onUnitSelect={handleUnitSelect} />
-                {/* <UnitInfo unitName={selectedUnit.title} content={selectedUnit.content} pageCount={selectedUnit.pageCount} /> */}
+                <CoursePlan course={selectedCourse} selectedLesson={selectedUnit} setSelectedLesson={setSelectedUnit}/>
+                {/* <CoursePlan course={selectedCourse} selectedLesson={selectedUnit} setselectedLesson={setSelectedUnit} /> */}
               </div>
             ) : currentView === 'courses' && selectedCourse ? (
               // Render only Course Plan when a course is selected and no unit is selected
               <div className="flex flex-col w-full p-4 bg-darkGrey">
-                <CoursePlan course={selectedCourse} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} onUnitSelect={handleUnitSelect} />
+                <CoursePlan course={selectedCourse} selectedLesson={selectedUnit} setSelectedLesson={setSelectedUnit}/>
+                
+                {/* <CoursePlan course={selectedCourse} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} /> */}
               </div>
             ) : currentView === 'courses' && createCourse ? (
               // Render Create Course view when createCourse state is true
