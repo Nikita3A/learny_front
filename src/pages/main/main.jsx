@@ -10,6 +10,7 @@ import CoursePlan from '../../components/CoursePlan';
 import CreateCourse from '../../components/CreateCourse';
 import UnitInfo from '../../components/UnitInfo'; // Import the UnitInfo component
 import io from 'socket.io-client';
+import axios from "axios";
 
 const App = () => {
   const [activeChat, setActiveChat] = useState(null);
@@ -63,15 +64,35 @@ const App = () => {
     };
 
     const loadCourses = async () => {
+      if (!currentUser || !currentUser.accessToken) {
+        console.error("No token available. Please sign in.");
+        return;
+      }
+  
       try {
-        const mockCourseData = [
-          { id: 1, name: 'Course 1', progress: '100%' },
-        ];
-        setCourseList(mockCourseData);
+        // Fetch data from the server
+        const response = await axios.get("/api/courses/users", {
+          headers: {
+            Authorization: `Bearer ${currentUser.accessToken}`,
+          },
+        });
+  
+        const serverCourses = response.data;
+  
+        // Transform the server's data to match the expected structure
+        const transformedCourses = serverCourses.map((course) => ({
+          id: course.id,
+          name: course.theme, // Use "theme" as the course name
+          progress: "0%", // Default progress value
+        }));
+  
+        // Update the state
+        setCourseList(transformedCourses);
       } catch (error) {
-        console.error('Error fetching courses:', error);
+        console.error("Error fetching courses:", error);
       }
     };
+    
 
     loadChats();
     loadCourses();
@@ -99,6 +120,36 @@ const App = () => {
     }
   }, [activeChat]);
 
+  const loadCoursesList = async () => {
+    if (!currentUser || !currentUser.accessToken) {
+      console.error("No token available. Please sign in.");
+      return;
+    }
+
+    try {
+      // Fetch data from the server
+      const response = await axios.get("/api/courses/users", {
+        headers: {
+          Authorization: `Bearer ${currentUser.accessToken}`,
+        },
+      });
+
+      const serverCourses = response.data;
+
+      // Transform the server's data to match the expected structure
+      const transformedCourses = serverCourses.map((course) => ({
+        id: course.id,
+        name: course.theme, // Use "theme" as the course name
+        progress: "0%", // Default progress value
+      }));
+
+      // Update the state
+      setCourseList(transformedCourses);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
+  
   const handleSendMessage = (messageText) => {
     if (socketConnection && messageText.trim() !== '') {
       socketConnection.emit('sendMessage', {
@@ -129,6 +180,7 @@ const App = () => {
   const handleCourseSelect = (course) => {
     console.log('unit: ', selectedUnit);
     console.log('Selected course: ', course);
+    
     setSelectedCourse(course);
     setSelectedUnit(null);
     setActiveChat(null); // Deselect chat when a course is selected
@@ -197,7 +249,6 @@ const App = () => {
     setIsSidebarOpen(false);
   };
   
-
   const handleBackClick = () => {
     setActiveChat(null);
     setIsSidebarOpen(true);
@@ -272,7 +323,7 @@ const App = () => {
             ) : currentView === 'courses' && createCourse ? (
               // Render Create Course view when createCourse state is true
               <div className="flex flex-col w-full p-4 bg-darkGrey">
-                <CreateCourse />
+                <CreateCourse hideForm={switchToCoursesView} loadCoursesList={loadCoursesList}/>
               </div>
             ) : null}
           </>

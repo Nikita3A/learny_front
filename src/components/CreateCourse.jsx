@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
-const CreateCourse = () => {
-  // State variables for each input field
-  const [language, setLanguage] = useState('');
-  const [theme, setTheme] = useState('');
-  const [targetAudience, setTargetAudience] = useState('');
-  const [learningObjectives, setLearningObjectives] = useState('');
-  const [courseStructure, setCourseStructure] = useState('');
+const CreateCourse = ({hideForm, loadCoursesList}) => {
+  const [language, setLanguage] = useState("");
+  const [theme, setTheme] = useState("");
+  const [targetAudience, setTargetAudience] = useState("");
+  const [learningObjectives, setLearningObjectives] = useState("");
+  const [courseStructure, setCourseStructure] = useState("");
+  // Access the current user's access token from Redux store
+  const { currentUser } = useSelector((state) => state.user);
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    // Construct the course data object
     const courseData = {
       language,
       theme,
@@ -20,24 +22,42 @@ const CreateCourse = () => {
       courseStructure,
     };
 
-    // Process the course data (e.g., send to API or state management)
-    console.log('Course Data:', courseData);
+    try {
+      // Make the POST request to create a new course
+      const response = await axios.post("/api/courses/", courseData, {
+        headers: {
+          Authorization: `Bearer ${currentUser.accessToken}`, // Include access token in headers
+        },
+      });
 
-    // Clear form inputs after submission
-    setLanguage('');
-    setTheme('');
-    setTargetAudience('');
-    setLearningObjectives('');
-    setCourseStructure('');
+      console.log("Course created successfully:", response.data);
+
+      // Clear form inputs after successful submission
+      setLanguage("");
+      setTheme("");
+      setTargetAudience("");
+      setLearningObjectives("");
+      setCourseStructure("");
+
+      hideForm();
+      loadCoursesList();
+
+      // Optionally, notify the user or redirect them to another page
+    } catch (error) {
+      console.error("Error creating course:", error);
+      hideForm();
+      loadCoursesList();
+      // Handle errors (e.g., show an error message to the user)
+    }
   };
 
   return (
     <div className="overflow-x-hidden sm:overflow-visible p-6 bg-darkGray h-full w-full rounded-xl shadow-md space-y-4">
-      {/* <h2 className="text-white text-xl font-bold mb-4">Create a New Course</h2> */}
       <form onSubmit={handleFormSubmit} className="space-y-4">
-        {/* Language Input */}
         <div>
-          <label htmlFor="language" className="block text-white mb-1">Language of the Course</label>
+          <label htmlFor="language" className="block text-white mb-1">
+            Language of the Course
+          </label>
           <input
             type="text"
             id="language"
@@ -49,9 +69,10 @@ const CreateCourse = () => {
           />
         </div>
 
-        {/* Theme or Subject Input */}
         <div>
-          <label htmlFor="theme" className="block text-white mb-1">Theme or Subject</label>
+          <label htmlFor="theme" className="block text-white mb-1">
+            Theme or Subject
+          </label>
           <input
             type="text"
             id="theme"
@@ -63,9 +84,10 @@ const CreateCourse = () => {
           />
         </div>
 
-        {/* Target Audience Input */}
         <div>
-          <label htmlFor="targetAudience" className="block text-white mb-1">Target Audience</label>
+          <label htmlFor="targetAudience" className="block text-white mb-1">
+            Target Audience
+          </label>
           <input
             type="text"
             id="targetAudience"
@@ -77,9 +99,10 @@ const CreateCourse = () => {
           />
         </div>
 
-        {/* Learning Objectives Input */}
         <div>
-          <label htmlFor="learningObjectives" className="block text-white mb-1">Learning Objectives</label>
+          <label htmlFor="learningObjectives" className="block text-white mb-1">
+            Learning Objectives
+          </label>
           <textarea
             id="learningObjectives"
             value={learningObjectives}
@@ -91,9 +114,10 @@ const CreateCourse = () => {
           ></textarea>
         </div>
 
-        {/* Course Structure Input */}
         <div>
-          <label htmlFor="courseStructure" className="block text-white mb-1">Course Structure</label>
+          <label htmlFor="courseStructure" className="block text-white mb-1">
+            Course Structure
+          </label>
           <textarea
             id="courseStructure"
             value={courseStructure}
@@ -105,7 +129,6 @@ const CreateCourse = () => {
           ></textarea>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full py-2 px-4 bg-green rounded-md text-white font-bold hover:bg-opacity-80 transition"
