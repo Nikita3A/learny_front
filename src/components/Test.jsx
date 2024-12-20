@@ -19,9 +19,10 @@ const Test = ({ testData, handleTestFinish }) => {
 
   const renderQuestionComponent = () => {
     if (!currentQuestion) return <p>Loading...</p>;
-
+    console.log('cure: ', currentQuestion);
+    
     switch (currentQuestion.type) {
-      case "single-choice":
+      case "single":
         return (
           <QuestionType1
             question={currentQuestion.question}
@@ -29,7 +30,7 @@ const Test = ({ testData, handleTestFinish }) => {
             correctAnswer={currentQuestion.correctAnswer}
           />
         );
-      case "multiple-choice":
+      case "multiple":
         return (
           <QuestionType2
             question={currentQuestion.question}
@@ -37,7 +38,7 @@ const Test = ({ testData, handleTestFinish }) => {
             correctAnswers={currentQuestion.correctAnswers}
           />
         );
-      case "text-input":
+      case "text":
         return (
           <QuestionType3
             question={currentQuestion.question}
