@@ -11,30 +11,17 @@ const AddUserModal = ({ isOpen, onRequestClose, chat }) => {
     event.preventDefault();
     
     try {
-      // /api/users/${jaja}
-      // @Put('/api/chats/:id/users/:userId')
       const user = await axios.get(`/api/users/${userName}`);
 
       console.log('ui: ', user.data.id);
       console.log('chat: ', chat.id);
       await axios.put(`/api/chats/${chat.id}/users/${user.data.id}`);
-
-      // Handle response here. For example:
-      // console.log(response.data);
-      // if (typeof onAddChat === 'function') {
-      //   onAddChat(chatName);
-      // }
   
       // Close the modal
       onRequestClose();
-  
-      // Refresh the chat list
-      // const chatResponse = await axios.get(`/api/users/${currentUser.user.id}/chats`);
-      // setChats(chatResponse.data);
     } catch (error) {
       console.error("Error adding chat: ", error);
     }
-  
     setuserName('');
   };
   
