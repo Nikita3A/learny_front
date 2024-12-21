@@ -156,20 +156,44 @@ const App = () => {
     }
   };
   
+  // const handleSendMessage = (messageText) => {
+  //   if (socketConnection && messageText.trim() !== '') {
+  //     socketConnection.emit('sendMessage', {
+  //       text: messageText,
+  //       userId: currentUser.user.id,
+  //       chatId: activeChat ? activeChat.id : 'ai',
+  //     });
+
+  //     socketConnection.on('newMessage', (newMessage) => {
+  //       setMessageList((prevMessages) => [...prevMessages, newMessage]);
+  //     });
+  //   }
+  // };
+
   const handleSendMessage = (messageText) => {
     if (socketConnection && messageText.trim() !== '') {
+      // Emit the message with userId
       socketConnection.emit('sendMessage', {
         text: messageText,
         userId: currentUser.user.id,
         chatId: activeChat ? activeChat.id : 'ai',
       });
-
+  
+      // Listen for the newMessage event and update the message list
       socketConnection.on('newMessage', (newMessage) => {
-        setMessageList((prevMessages) => [...prevMessages, newMessage]);
+        const enrichedMessage = {
+          ...newMessage,
+          user: {
+            id: currentUser.user.id,
+            username: currentUser.user.username, // Add the username from currentUser
+          },
+        };
+  
+        setMessageList((prevMessages) => [...prevMessages, enrichedMessage]);
       });
     }
   };
-
+  
   const toggleAddChatModal = () => {
     setIsAddChatModalOpen(!isAddChatModalOpen);
   };
