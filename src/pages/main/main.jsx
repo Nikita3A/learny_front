@@ -268,9 +268,9 @@ const App = () => {
     setCreateCourse(null);
   };
 
-  const addUser = () => {
-    setIsAddUserModalOpen(!isAddUserModalOpen);
-  }
+  // const addUser = () => {
+  //   setIsAddUserModalOpen(!isAddUserModalOpen);
+  // }
 
   return (
     <div className="flex flex-col h-screen bg-dark overflow-hidden">
@@ -309,14 +309,14 @@ const App = () => {
                 <ChatWindow
                   chat={activeChat}
                   messages={messageList}
-                  addUser={addUser}
+                  addUser={toggleAddUserModal}
                   onSubmitMessage={handleSendMessage}
                 />
               ) : currentView === 'ai' && (!isMobile || isAIChatVisible) ? (
                 <ChatWindow
                   chat={{ name: 'AI Chat' }}
                   messages={messageList}
-                  addUser={addUser}
+                  addUser={toggleAddUserModal}
                   onSubmitMessage={handleSendMessage}
                 />
               ) : null}
@@ -346,7 +346,7 @@ const App = () => {
         )}
       </div>
       <AddChatModal isOpen={isAddChatModalOpen} onRequestClose={toggleAddChatModal} setChats={setChatList} />
-      <AddUserModal isOpen={isAddUserModalOpen} onRequestClose={toggleAddUserModal} />
+      <AddUserModal isOpen={isAddUserModalOpen} onRequestClose={toggleAddUserModal} chat={activeChat} />
     </div>
   );
 };

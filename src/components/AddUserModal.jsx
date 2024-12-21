@@ -3,36 +3,39 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-const AddUserModal = ({ isOpen, onRequestClose, onAddUser }) => {
-  const [chatName, setChatName] = useState('');
+const AddUserModal = ({ isOpen, onRequestClose, chat }) => {
+  const [userName, setuserName] = useState('');
   const currentUser = useSelector(state => state.user.currentUser);
 
-  const handleAddUser = async (event) => {
+  const handleAddUserToChat = async (event) => {
     event.preventDefault();
-  
+    
     try {
-      const response = await axios.post('/api/chats', {
-        id: currentUser.id, // Use the user ID from the Redux store
-        name: chatName,
-      });
-  
+      // /api/users/${jaja}
+      // @Put('/api/chats/:id/users/:userId')
+      const user = await axios.get(`/api/users/${userName}`);
+
+      console.log('ui: ', user.data.id);
+      console.log('chat: ', chat.id);
+      await axios.put(`/api/chats/${chat.id}/users/${user.data.id}`);
+
       // Handle response here. For example:
-      console.log(response.data);
-      if (typeof onAddChat === 'function') {
-        onAddChat(chatName);
-      }
+      // console.log(response.data);
+      // if (typeof onAddChat === 'function') {
+      //   onAddChat(chatName);
+      // }
   
       // Close the modal
       onRequestClose();
   
       // Refresh the chat list
-      const chatResponse = await axios.get(`/api/users/${currentUser.user.id}/chats`);
-      setChats(chatResponse.data);
+      // const chatResponse = await axios.get(`/api/users/${currentUser.user.id}/chats`);
+      // setChats(chatResponse.data);
     } catch (error) {
       console.error("Error adding chat: ", error);
     }
   
-    setChatName('');
+    setuserName('');
   };
   
 
@@ -52,12 +55,12 @@ const AddUserModal = ({ isOpen, onRequestClose, onAddUser }) => {
         >
           Close
         </button>
-        <form onSubmit={handleAddUser} className="flex flex-col items-center">
+        <form onSubmit={handleAddUserToChat} className="flex flex-col items-center">
           <input
             type="text"
             placeholder="User Name"
-            value={chatName}
-            onChange={(e) => setChatName(e.target.value)}
+            value={userName}
+            onChange={(e) => setuserName(e.target.value)}
             className="w-full p-2 rounded-lg text-white bg-mediumGray focus:border-green focus:ring-green focus:outline-none focus:ring focus:ring-opacity-50"
           />
           <button
