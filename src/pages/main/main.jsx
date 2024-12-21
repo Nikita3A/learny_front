@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import Navbar from '../../components/Navbar';
 import ChatList from '../../components/ChatList';
 import CourseList from '../../components/CourseList';
+import AddUserModal from '../../components/AddUserModal';
 import AddChatModal from '../../components/AddChatModal';
 import ChatWindow from '../../components/ChatWindow';
 import Profile from '../../components/Profile';
@@ -19,6 +20,7 @@ const App = () => {
   const [courseList, setCourseList] = useState([]);
   const [socketConnection, setSocketConnection] = useState(null);
   const [isAddChatModalOpen, setIsAddChatModalOpen] = useState(false);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState('courses');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
@@ -53,10 +55,15 @@ const App = () => {
 
     const loadChats = async () => {
       try {
-        const mockChatData = [
-          { chatId: 1, name: 'Chat1', lastMessage: 'Hello' },
-        ];
-        setChatList(mockChatData);
+        console.log('ll: ', currentUser);
+        
+        const response = await axios.get(`/api/users/${currentUser.user.id}/chats`, {
+          headers: {
+            Authorization: `Bearer ${currentUser.accessToken}`,
+          },
+        });
+
+        setChatList(response.data);
       } catch (error) {
         console.error('Error fetching chats:', error);
       }
@@ -167,6 +174,10 @@ const App = () => {
     setIsAddChatModalOpen(!isAddChatModalOpen);
   };
 
+  const toggleAddUserModal = () => {
+    setIsAddUserModalOpen(!isAddUserModalOpen);
+  };
+
   const handleChatSelect = (chat) => {
     setActiveChat(chat);
     setSelectedUnit(null);
@@ -177,8 +188,8 @@ const App = () => {
   };
 
   const handleCourseSelect = (course) => {
-    console.log('unit: ', selectedUnit);
-    console.log('Selected course: ', course);
+    // console.log('unit: ', selectedUnit);
+    // console.log('Selected course: ', course);
     
     setSelectedCourse(course);
     setSelectedUnit(null);
@@ -257,6 +268,10 @@ const App = () => {
     setCreateCourse(null);
   };
 
+  const addUser = () => {
+    setIsAddUserModalOpen(!isAddUserModalOpen);
+  }
+
   return (
     <div className="flex flex-col h-screen bg-dark overflow-hidden">
       <Navbar
@@ -294,14 +309,14 @@ const App = () => {
                 <ChatWindow
                   chat={activeChat}
                   messages={messageList}
-                  onBackClick={handleBackClick}
+                  addUser={addUser}
                   onSubmitMessage={handleSendMessage}
                 />
               ) : currentView === 'ai' && (!isMobile || isAIChatVisible) ? (
                 <ChatWindow
                   chat={{ name: 'AI Chat' }}
                   messages={messageList}
-                  onBackClick={handleBackClick}
+                  addUser={addUser}
                   onSubmitMessage={handleSendMessage}
                 />
               ) : null}
@@ -331,6 +346,7 @@ const App = () => {
         )}
       </div>
       <AddChatModal isOpen={isAddChatModalOpen} onRequestClose={toggleAddChatModal} setChats={setChatList} />
+      <AddUserModal isOpen={isAddUserModalOpen} onRequestClose={toggleAddUserModal} />
     </div>
   );
 };
