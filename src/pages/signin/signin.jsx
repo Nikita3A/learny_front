@@ -16,7 +16,7 @@ const Signin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSignin = async (e) => {
     e.preventDefault();
     dispatch(loginStart());
     try {
@@ -76,6 +76,7 @@ const Signin = () => {
               type="text"
               placeholder="username or email@mail.com"
               className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-2 sm:mb-4">
@@ -83,10 +84,11 @@ const Signin = () => {
               type="password"
               placeholder="password"
               className="w-full p-3 bg-dark text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-green"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="mb-2 sm:mb-4">
-            <button className="w-full p-3 bg-green text-white rounded-2xl hover:bg-green-dark focus:outline-none">
+            <button onClick={handleSignin} className="w-full p-3 bg-green text-white rounded-2xl hover:bg-green-dark focus:outline-none">
               Signin
             </button>
           </div>

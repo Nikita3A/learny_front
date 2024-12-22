@@ -17,12 +17,10 @@ export const userSlice = createSlice({
       state.isLoading = false;
       state.currentUser = action.payload;
     },
-
     updateTokens: (state, action) => {
       state.currentUser.accessToken = action.payload.accessToken;
       state.currentUser.refreshToken = action.payload.refreshToken;
     },
-
     loginFailed: (state) => {
       state.isLoading = false;
       state.error = true;
@@ -44,6 +42,10 @@ export const userSlice = createSlice({
         state.currentUser.following.push(action.payload);
       }
     },
+    // New Action for Updating Username
+    updateUsername: (state, action) => {
+      state.currentUser.user.username = action.payload;
+    },
   },
 });
 
@@ -55,6 +57,7 @@ export const {
   changeProfile,
   following,
   updateTokens,
+  updateUsername, // Export the new action
 } = userSlice.actions;
 
 export default userSlice.reducer;
