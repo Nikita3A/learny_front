@@ -1,6 +1,6 @@
-# Social App Front End
+# Learny Front End
 
-This project contains the front end code for a social app. It's designed to provide a seamless user experience and easy navigation.
+This project contains the front-end code for the Learny app. It is designed to provide AI-generated courses and tests.
 
 ## Prerequisites
 
@@ -13,4 +13,4 @@ Before you begin, ensure you have met the following requirements:
 To install the project dependencies, navigate to the root directory of the project and run the following command:
 
 ```bash
-$ npm install
+$ npm i --force
