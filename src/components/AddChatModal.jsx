@@ -3,24 +3,18 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-const AddChatModal = ({ isOpen, onRequestClose, onAddChat, setChats }) => {
+const AddChatModal = ({ isOpen, onRequestClose, setChats }) => {
   const [chatName, setChatName] = useState('');
   const currentUser = useSelector(state => state.user.currentUser);
 
   const handleAddChat = async (event) => {
     event.preventDefault();
   
-    try {
+    try {      
       const response = await axios.post('/api/chats', {
-        id: currentUser.id, // Use the user ID from the Redux store
+        id: currentUser.user.id, // Use the user ID from the Redux store
         name: chatName,
       });
-  
-      // Handle response here. For example:
-      console.log(response.data);
-      if (typeof onAddChat === 'function') {
-        onAddChat(chatName);
-      }
   
       // Close the modal
       onRequestClose();

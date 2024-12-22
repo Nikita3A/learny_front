@@ -55,14 +55,11 @@ const App = () => {
 
     const loadChats = async () => {
       try {
-        console.log('ll: ', currentUser);
-        
         const response = await axios.get(`/api/users/${currentUser.user.id}/chats`, {
           headers: {
             Authorization: `Bearer ${currentUser.accessToken}`,
           },
-        });
-
+        });        
         setChatList(response.data);
       } catch (error) {
         console.error('Error fetching chats:', error);

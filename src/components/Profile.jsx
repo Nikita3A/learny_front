@@ -10,8 +10,6 @@ const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log('ccc: ', currentUser.user.email);
-  
   const handleSave = async () => {
     try {
       const response = await axios.put(`/api/users/${currentUser.user.id}`, {
@@ -21,7 +19,8 @@ const Profile = () => {
       if (response.status === 200) {
         alert('Profile updated successfully!');
         // Optionally, update the Redux state with new username
-        dispatch({ type: 'UPDATE_USER', payload: { username } });
+        dispatch(updateUsername(username));
+        // dispatch({ type: 'UPDATE_USER', payload: { username } });
       }
     } catch (error) {
       alert(error.response?.data?.message || 'Error updating profile.');
